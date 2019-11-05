@@ -15,18 +15,49 @@ class Graficador
 public:
 
 	//constructores
+	Graficador(byte rclock, byte lacth, byte data);
 	Graficador();
-	Graficador::Graficador(byte rclock, byte lacth, byte data);
 
-	void imprimirMatriz(int**mat, int fila, int col);
-	void llenarMatriz(int** mat, int f, int c);
-	int** nuevaMatriz(int filas, int columnas);
-
+	//metodos
+	void init();
+	void imprimirCapa();
+	void enviarData();
+	void actualizarData();
+	
 
 private:
 
+	//variables globales
+	float ejex[8];
+	float ejey[8];
+	const int tamCol = 8;
+	const int tamFila = 8;
+	int** capa;
 
-	int8_t fila[8];		//
+	//limites ejex
+	int linfx = 0;
+	int lsupx = 0;
+
+	//limites ejey
+	int linfy = 0;
+	int lsupy = 0;
+
+	//limites ejez
+	int linfz = 0;
+	int lsupz = 0;
+		 
+	
+	//metodos para el algoritmo de graficado
+	void escalar(float* vector,int linf,int lsup);
+	
+	//metodoa para crear una matriz
+	void crearCapa();
+	void imprimirMatriz(int**mat, int fila, int col);
+	void llenarMatriz(int** mat, int f, int c);
+	int** nuevaMatriz(int filas, int columnas);
+	void llenarCeros(float* vector);
+
+			
 	byte rclock;		// to all registers
 	byte latch;			// to all registers
 	byte data;			// to first register
