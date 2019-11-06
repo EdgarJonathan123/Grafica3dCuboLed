@@ -46,9 +46,27 @@ private:
 	int linfz = 0;
 	int lsupz = 0;
 		 
+
+	//Filas
+	int nivel = 255;
+	int fila0 = 0;
+	int fila1 = 0;
+	int fila2 = 0;
+	int fila3 = 0;
+	int fila4 = 0;
+	int fila5 = 0;
+	int fila6 = 0;
+	int fila7 = 0;
+
 	
 	//metodos para el algoritmo de graficado
 	void escalar(float* vector,int linf,int lsup);
+	void valuafxy();
+	float getfx(int i,boolean* fxvalida);
+	int getPosj(int fx,int i);
+	void toCubo();
+	int elevar(int n,int m);
+
 	
 	//metodoa para crear una matriz
 	void crearCapa();
@@ -56,6 +74,7 @@ private:
 	void llenarMatriz(int** mat, int f, int c);
 	int** nuevaMatriz(int filas, int columnas);
 	void llenarCeros(float* vector);
+	void printData();
 
 			
 	byte rclock;		// to all registers
