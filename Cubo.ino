@@ -1,5 +1,4 @@
 #include "Analisis.h"
-#include "Analizador.h"
 #include "Grafica.h"
 Graficador graf = Graficador(2, 3, 4);
 

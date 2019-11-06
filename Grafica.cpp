@@ -9,6 +9,7 @@ Graficador::Graficador(byte rclock, byte latch, byte data)
 
 	llenarCeros(ejex);
 	llenarCeros(ejey);
+	llenarCeros(fila);
 
 	crearCapa();
 }
@@ -34,14 +35,14 @@ void Graficador::enviarData()
 {
 	digitalWrite(latch, LOW);
 	shiftOut(data, rclock, LSBFIRST, nivel); //Esta data queda en el ultimo shift register el que tiene el arreglo de transistores darlington ULN2803
-	shiftOut(data, rclock, LSBFIRST, fila7); //Esta data queda en el penultimo shift register
-	shiftOut(data, rclock, LSBFIRST, fila6);
-	shiftOut(data, rclock, LSBFIRST, fila5);
-	shiftOut(data, rclock, LSBFIRST, fila4);
-	shiftOut(data, rclock, LSBFIRST, fila3);
-	shiftOut(data, rclock, LSBFIRST, fila2);
-	shiftOut(data, rclock, LSBFIRST, fila1);
-	shiftOut(data, rclock, LSBFIRST, fila0); //Esta data queda en el primer shift register
+	shiftOut(data, rclock, LSBFIRST, fila[7]); //Esta data queda en el penultimo shift register
+	shiftOut(data, rclock, LSBFIRST, fila[6]);
+	shiftOut(data, rclock, LSBFIRST, fila[5]);
+	shiftOut(data, rclock, LSBFIRST, fila[4]);
+	shiftOut(data, rclock, LSBFIRST, fila[3]);
+	shiftOut(data, rclock, LSBFIRST, fila[2]);
+	shiftOut(data, rclock, LSBFIRST, fila[1]);
+	shiftOut(data, rclock, LSBFIRST, fila[0]); //Esta data queda en el primer shift register
 	digitalWrite(latch, HIGH);
 }
 void Graficador::imprimirMatriz(int**mat, int fila, int col) {
@@ -82,34 +83,42 @@ void Graficador::llenarCeros(float* vector) {
 	}
 }
 
+void Graficador::llenarCeros(int * vector)
+{
+	for (size_t i = 0; i < 8; i++)
+	{
+		vector[i] = 0;
+	}
+}
+
 void Graficador::printData()
 {
 	Serial.print("[Nivel = ");
 	Serial.print(nivel);
 	Serial.println(" ]");
 	Serial.print("[fila0 = ");
-	Serial.print(fila0);
+	Serial.print(fila[0]);
 	Serial.println(" ]");
 	Serial.print("[fila1 = ");
-	Serial.print(fila1);
+	Serial.print(fila[1]);
 	Serial.println(" ]");
 	Serial.print("[fila2 = ");
-	Serial.print(fila2);
+	Serial.print(fila[2]);
 	Serial.println(" ]");
 	Serial.print("[fila3 = ");
-	Serial.print(fila3);
+	Serial.print(fila[3]);
 	Serial.println(" ]");
 	Serial.print("[fila4 = ");
-	Serial.print(fila4);
+	Serial.print(fila[4]);
 	Serial.println(" ]");
 	Serial.print("[fila5 = ");
-	Serial.print(fila5);
+	Serial.print(fila[5]);
 	Serial.println(" ]");
 	Serial.print("[fila6 = ");
-	Serial.print(fila6);
+	Serial.print(fila[6]);
 	Serial.println(" ]");
 	Serial.print("[fila7 = ");
-	Serial.print(fila7);
+	Serial.print(fila[7]);
 	Serial.println(" ]");
 
 }
@@ -175,8 +184,8 @@ int Graficador::getPosj(int fx, int i)
 
 		//si b<a entonces elegimos b
 		// b esta asociado a i+1
-		if (b<a) {
-			if(j > 0) {
+		if (b < a) {
+			if (j > 0) {
 				c = abs(ejey[indice] - fx);
 				if (b < c) {
 					indice = j + 1;
@@ -223,56 +232,16 @@ int Graficador::getPosj(int fx, int i)
 
 void Graficador::toCubo()
 {
-	fila0 = 0;
-	fila1 = 0;
-	fila2 = 0;
-	fila3 = 0;
-	fila4 = 0;
-	fila5 = 0;
-	fila6 = 0;
-	fila7 = 0;
+	llenarCeros(fila);
 
 	int peso = 0;
 	int potencia = 0;
-	for (int i = 0; i < 8; i++) {
 
+	for (int i = 0; i < 8; i++) {
 		potencia = 0;
 		for (int j = 7; j > -1; --j) {
-
-			if (i == 0) {
-				peso = elevar(2, potencia);
-				fila0 += capa[i][j] * peso;
-			}
-			else if (i == 1) {
-				peso = elevar(2, potencia);
-				fila1 += capa[i][j] * peso;
-			}
-			else if (i == 2) {
-				peso = elevar(2, potencia);
-				fila2 += capa[i][j] * peso;
-			}
-			else if (i == 3) {
-				peso = elevar(2, potencia);
-				fila3 += capa[i][j] * peso;
-			}
-			else if (i == 4) {
-				peso = elevar(2, potencia);
-				fila4 += capa[i][j] * peso;
-			}
-			else if (i == 5) {
-				peso = elevar(2, potencia);
-				fila5 += capa[i][j] * peso;
-			}
-			else if (i == 6) {
-				peso = elevar(2, potencia);
-				fila6 += capa[i][j] * peso;
-			}
-			else if (i == 7) {
-				peso = elevar(2, potencia);
-				fila7 += capa[i][j] * peso;
-			}
-
-
+			peso = elevar(2, potencia);
+			fila[i] += capa[i][j] * peso;
 			++potencia;
 		}
 
@@ -299,7 +268,7 @@ void Graficador::valuafxy() {
 
 	for (size_t i = 0; i < 8; i++)
 	{
-		fx = getfx(i,&fxvalida);
+		fx = getfx(i, &fxvalida);
 
 		if (fxvalida) {
 			int j = getPosj(fx, i);
@@ -307,12 +276,12 @@ void Graficador::valuafxy() {
 		}
 		else {
 		}
-		
+
 	}
 
 }
 
-float Graficador::getfx(int i,boolean* fxvalida)
+float Graficador::getfx(int i, boolean* fxvalida)
 {
 	*fxvalida = false;
 

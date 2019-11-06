@@ -47,16 +47,9 @@ private:
 	int lsupz = 0;
 		 
 
-	//Filas
+	//Salidas al cubo
 	int nivel = 255;
-	int fila0 = 0;
-	int fila1 = 0;
-	int fila2 = 0;
-	int fila3 = 0;
-	int fila4 = 0;
-	int fila5 = 0;
-	int fila6 = 0;
-	int fila7 = 0;
+	int fila[8];
 
 	
 	//metodos para el algoritmo de graficado
@@ -74,6 +67,7 @@ private:
 	void llenarMatriz(int** mat, int f, int c);
 	int** nuevaMatriz(int filas, int columnas);
 	void llenarCeros(float* vector);
+	void llenarCeros(int* vector);
 	void printData();
 
 			
