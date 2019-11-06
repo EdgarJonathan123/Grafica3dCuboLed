@@ -3,12 +3,14 @@
 
 Graficador::Graficador(byte rclock, byte latch, byte data)
 {
+	this->ana = Analizador();
 	this->rclock = rclock;
 	this->latch = latch;
 	this->data = data;
 
 	llenarCeros(ejex);
 	llenarCeros(ejey);
+	llenarCeros(ejez);
 	llenarCeros(fila);
 
 	crearCapa();
@@ -125,6 +127,11 @@ void Graficador::printData()
 
 
 //******Metodos del Algoritmo*******************
+
+void Graficador::SetFuncion(String entrada)
+{
+	ana.analizaEntrada(entrada, &Fxyz, &linfx, &lsupx, &linfy, &lsupy, &linfz, &lsupz);
+}
 
 void Graficador::escalar(float* vector, int linf, int lsup) {
 
@@ -252,11 +259,11 @@ int Graficador::elevar(int n, int m)
 {
 	int result = 1;
 
-
 	for (size_t i = 0; i < m; i++)
 	{
 		result = result*n;
 	}
+
 
 	return result;
 }
@@ -273,8 +280,10 @@ void Graficador::valuafxy() {
 		if (fxvalida) {
 			int j = getPosj(fx, i);
 			capa[i][j] = 1;
-		}
-		else {
+
+
+			j = getPosj(-fx, i);
+			capa[i][j] = 1;
 		}
 
 	}
@@ -321,17 +330,22 @@ float Graficador::getfx(int i, boolean* fxvalida)
 
 void Graficador::actualizarData()
 {
-
-	linfx = 0;
-	lsupx = 9;
+	escalar(ejez,linfz,lsupz);
 	escalar(ejex, linfx, lsupx);
-
-	linfy = -9;
-	lsupy = 9;
 	escalar(ejey, linfy, lsupy);
 
-	valuafxy();
-	toCubo();
-	//printData();
+	int potencia=7;
+	for (size_t i = 0; i < 8; i++)
+	{
+		nivel = elevar(2,potencia);
+		valuafxy();
+		toCubo();
+		enviarData();
+
+		--potencia;
+		delay(100);
+	}
+
+	
 
 }

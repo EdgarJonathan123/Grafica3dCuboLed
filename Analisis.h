@@ -12,10 +12,12 @@
 class Analizador
 {
 public:
-	Analizador();
-	~Analizador();
 
-private:
+
+	Analizador();
+	void analizaEntrada(String data,String* Fxyz,int* linfx,int*lsupx,int*linfy,int*lsupy,int*linfz,int*lsupz);
+
+
 
 };
 

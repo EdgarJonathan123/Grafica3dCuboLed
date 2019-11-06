@@ -1,5 +1,5 @@
 // Grafica.h
-
+#include "Analisis.h"
 #ifndef _GRAFICA_h
 #define _GRAFICA_h
 
@@ -23,16 +23,23 @@ public:
 	void imprimirCapa();
 	void enviarData();
 	void actualizarData();
+	void SetFuncion(String entrada);
 	
 
 private:
 
 	//variables globales
+	Analizador ana;
 	float ejex[8];
 	float ejey[8];
+	float ejez[8];
 	const int tamCol = 8;
 	const int tamFila = 8;
 	int** capa;
+
+	//funciones
+	String Fxyz;
+	String Fxy;
 
 	//limites ejex
 	int linfx = 0;
@@ -48,7 +55,7 @@ private:
 		 
 
 	//Salidas al cubo
-	int nivel = 255;
+	int nivel = 0;
 	int fila[8];
 
 	

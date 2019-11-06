@@ -1,16 +1,18 @@
-#include "Analisis.h"
 #include "Grafica.h"
-Graficador graf = Graficador(2, 3, 4);
 
+
+String inFuncion = "(x^2/4)+(y^2/8+2)+z^2=2^2*1;-9;9;-9;9;-10;10";
+Graficador graf = Graficador(2, 3, 4);
 
 void setup() {
 	Serial.begin(9600);
 	graf.init();
+	graf.SetFuncion(inFuncion);
 }
 
 void loop() {
 	graf.actualizarData();
-	graf.enviarData();
+	
 }
 
 
