@@ -35,11 +35,12 @@ private:
 	float ejez[8];
 	const int tamCol = 8;
 	const int tamFila = 8;
-	int** capa;
+	byte** capa;
 
 	//funciones
-	String Fxyz;
-	String Fxy;
+	String Exyz;	//ecuacion 3 variables
+	String Exy;		//ecuacion 2 variables
+	String Ey;		//ecuacion 1 variable
 
 	//limites ejex
 	int linfx = 0;
@@ -55,12 +56,13 @@ private:
 		 
 
 	//Salidas al cubo
-	int nivel = 0;
-	int fila[8];
+	byte nivel = 0;
+	byte fila[8];
 
 	
 	//metodos para el algoritmo de graficado
 	void escalar(float* vector,int linf,int lsup);
+
 	void valuafxy();
 	float getfx(int i,boolean* fxvalida);
 	int getPosj(int fx,int i);
@@ -70,11 +72,11 @@ private:
 	
 	//metodoa para crear una matriz
 	void crearCapa();
-	void imprimirMatriz(int**mat, int fila, int col);
-	void llenarMatriz(int** mat, int f, int c);
-	int** nuevaMatriz(int filas, int columnas);
+	void imprimirMatriz(byte**mat, byte fila, byte col);
+	void llenarMatriz(byte** mat, byte f, byte c);
+	byte** nuevaMatriz(byte filas, byte columnas);
 	void llenarCeros(float* vector);
-	void llenarCeros(int* vector);
+	void llenarCeros(byte* vector);
 	void printData();
 
 			

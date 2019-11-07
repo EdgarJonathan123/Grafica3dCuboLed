@@ -16,7 +16,8 @@ public:
 
 	Analizador();
 	void analizaEntrada(String data,String* Fxyz,int* linfx,int*lsupx,int*linfy,int*lsupy,int*linfz,int*lsupz);
-
+	void ReplaceNum(String* origen,String* destino,float reemplazo,String coincidencia);
+	void despejarFX(String*FXY,float x);
 
 
 };
