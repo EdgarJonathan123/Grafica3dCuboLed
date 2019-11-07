@@ -4,9 +4,9 @@
 #define _ANALISIS_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
+#include "arduino.h"
 #else
-	#include "WProgram.h"
+#include "WProgram.h"
 #endif
 
 class Analizador
@@ -15,9 +15,9 @@ public:
 
 
 	Analizador();
-	void analizaEntrada(String data,String* Fxyz,int* linfx,int*lsupx,int*linfy,int*lsupy,int*linfz,int*lsupz);
-	void ReplaceNum(String* origen,String* destino,float reemplazo,String coincidencia);
-	void despejarFX(String*FXY,float x);
+	void analizaEntrada(String data, String * Fxyz, int * linfx, int * lsupx, int * linfy, int * lsupy, int * linfz, int * lsupz);
+	void ReplaceNum(String* origen, String* destino, float reemplazo, String coincidencia);
+	void despejarFX(String*FXY, float x);
 
 
 };

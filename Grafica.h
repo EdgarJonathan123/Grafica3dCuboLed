@@ -20,9 +20,12 @@ public:
 
 	//metodos
 	void init();
-	void imprimirCapa();
+	void printCubo();
+	//envia los datos al cubo
 	void enviarData();
+	//recorre la data y lo envia al cubo
 	void actualizarData();
+	//setea una funcion en 3d al cubo 
 	void SetFuncion(String entrada);
 	
 
@@ -33,9 +36,8 @@ private:
 	float ejex[8];
 	float ejey[8];
 	float ejez[8];
-	const int tamCol = 8;
-	const int tamFila = 8;
-	byte** capa;
+	byte*** cubo;
+	//byte** capa;
 
 	//funciones
 	String Exyz;	//ecuacion 3 variables
@@ -58,23 +60,29 @@ private:
 	//Salidas al cubo
 	byte nivel = 0;
 	byte fila[8];
-
 	
 	//metodos para el algoritmo de graficado
 	void escalar(float* vector,int linf,int lsup);
 
-	void valuafxy();
+	void valuafxy(byte** capa);
 	float getfx(int i,boolean* fxvalida);
-	int getPosj(int fx,int i);
-	void toCubo();
+	int getPosj(int fx,int i,byte** capa);
+	void toCubo(byte ** capa);
 	int elevar(int n,int m);
 
 	
 	//metodoa para crear una matriz
-	void crearCapa();
-	void imprimirMatriz(byte**mat, byte fila, byte col);
-	void llenarMatriz(byte** mat, byte f, byte c);
+	void crearCubo();
+	
+	byte*** nuevoCubo(byte filas,byte columnas,byte caras);
 	byte** nuevaMatriz(byte filas, byte columnas);
+
+	void imprimirCubo(byte***cubo,byte fila,byte columnas,byte caras);
+	void imprimirMatriz(byte**mat, byte fila, byte col);
+	
+	void llenarCubo(byte*** cubo,byte filas,byte columnas, byte caras);
+	void llenarMatriz(byte** mat, byte f, byte c);
+
 	void llenarCeros(float* vector);
 	void llenarCeros(byte* vector);
 	void printData();

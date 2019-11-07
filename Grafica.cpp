@@ -1,6 +1,8 @@
 
 #include "Grafica.h"
-
+Graficador::Graficador()
+{
+}
 Graficador::Graficador(byte rclock, byte latch, byte data)
 {
 	this->ana = Analizador();
@@ -8,30 +10,41 @@ Graficador::Graficador(byte rclock, byte latch, byte data)
 	this->latch = latch;
 	this->data = data;
 
-	llenarCeros(ejex);
-	llenarCeros(ejey);
-	llenarCeros(ejez);
-	llenarCeros(fila);
-
-	crearCapa();
+	//crearCapa();
 }
 void Graficador::init()
 {
 	pinMode(latch, OUTPUT);
 	pinMode(rclock, OUTPUT);
 	pinMode(data, OUTPUT);
+
+	llenarCeros(ejex);
+	llenarCeros(ejey);
+	llenarCeros(ejez);
+	llenarCeros(fila);
+
+	crearCubo();
 }
-Graficador::Graficador()
+
+
+
+void Graficador::crearCubo()
 {
+	cubo = nuevoCubo(8, 8, 8);
+	llenarCubo(cubo, 8, 8, 8);
+
+	for (byte i = 1; i < 8; i++)
+	{
+		cubo[i][i][i] = 1;
+
+	}
+
+	//printCubo();
 }
-void Graficador::crearCapa()
+
+void Graficador::printCubo()
 {
-	capa = nuevaMatriz(tamFila, tamCol);
-	llenarMatriz(capa, tamFila, tamCol);
-}
-void Graficador::imprimirCapa()
-{
-	imprimirMatriz(capa, tamFila, tamCol);
+	imprimirCubo(cubo, 8, 8, 8);
 }
 
 //envia los enteros al cubo
@@ -49,6 +62,16 @@ void Graficador::enviarData()
 	shiftOut(data, rclock, LSBFIRST, fila[0]); //Esta data queda en el primer shift register
 	digitalWrite(latch, HIGH);
 }
+void Graficador::imprimirCubo(byte *** cubo, byte fila, byte columnas, byte caras)
+{
+	for (byte i = 0; i < caras; i++)
+	{
+		Serial.print("*********** Cara = ");
+		Serial.print(i);
+		Serial.println("*********");
+		imprimirMatriz(cubo[i], fila, columnas);
+	}
+}
 void Graficador::imprimirMatriz(byte**mat, byte fila, byte col) {
 	for (byte i = 0; i < fila; i++) {
 		for (byte j = 0; j < col; ++j) {
@@ -57,6 +80,13 @@ void Graficador::imprimirMatriz(byte**mat, byte fila, byte col) {
 			Serial.print("]");
 		}
 		Serial.println("");
+	}
+}
+void Graficador::llenarCubo(byte *** cubo, byte filas, byte columnas, byte caras)
+{
+	for (byte i = 0; i < caras; i++)
+	{
+		llenarMatriz(cubo[i], filas, columnas);
 	}
 }
 void Graficador::llenarMatriz(byte** mat, byte f, byte c) {
@@ -70,19 +100,31 @@ void Graficador::llenarMatriz(byte** mat, byte f, byte c) {
 	}
 
 };
+byte *** Graficador::nuevoCubo(byte filas, byte columnas, byte caras)
+{
+	byte*** cubo;
+	cubo = new byte**[caras];
+
+	for (byte i = 0; i < caras; i++)
+	{
+		cubo[i] = nuevaMatriz(filas, columnas);
+	}
+
+	return cubo;
+}
 byte** Graficador::nuevaMatriz(byte filas, byte columnas) {
 
 	byte** matriz;
 	matriz = new byte*[filas];
 
-	for (int i = 0; i < filas; i++) {
+	for (byte i = 0; i < filas; i++) {
 		matriz[i] = new byte[columnas];
 	}
 	return matriz;
 }
 
 void Graficador::llenarCeros(float* vector) {
-	for (size_t i = 0; i < 8; i++)
+	for (byte i = 0; i < 8; i++)
 	{
 		vector[i] = 0;
 	}
@@ -90,7 +132,7 @@ void Graficador::llenarCeros(float* vector) {
 
 void Graficador::llenarCeros(byte * vector)
 {
-	for (size_t i = 0; i < 8; i++)
+	for (byte i = 0; i < 8; i++)
 	{
 		vector[i] = 0;
 	}
@@ -131,40 +173,32 @@ void Graficador::printData()
 
 //******Metodos del Algoritmo*******************
 
-void Graficador::SetFuncion(String entrada)
-{
-	ana.analizaEntrada(entrada, &Exyz, &linfx, &lsupx, &linfy, &lsupy, &linfz, &lsupz);
-
-	escalar(ejez, linfz, lsupz);
-	escalar(ejex, linfx, lsupx);
-	escalar(ejey, linfy, lsupy);
-}
 
 void Graficador::escalar(float* vector, int linf, int lsup) {
 
 	int tamanio = lsup - linf;
 
-	for (size_t i = 0; i < 8; i++)
+	for (byte i = 0; i < 8; i++)
 	{
 		float escala = ((float)tamanio / 7.00);
 		vector[i] = linf + i*escala;
 
-		/*	Serial.print("[ Escala = ");
+			Serial.print("[ escala = ");
 			Serial.print(escala);
 			Serial.print(" ]");
 
 
-			Serial.print("{ Vector(");
+			Serial.print("{ vector(");
 			Serial.print(i);
 			Serial.print(") = ");
 			Serial.print(vector[i]);
-			Serial.println(" }");*/
+			Serial.println(" }");
 	}
 
 
 }
 
-int Graficador::getPosj(int fx, int i)
+int Graficador::getPosj(int fx, int i, byte** capa)
 {
 	int indice = 0;
 	float a = 0;
@@ -247,16 +281,17 @@ int Graficador::getPosj(int fx, int i)
 
 
 //actualiza todos los valores enteros para enviarlos al cubo
-void Graficador::toCubo()
+void Graficador::toCubo(byte**matriz)
 {
 	llenarCeros(fila);
 	int peso = 0;
 	int potencia = 0;
+
 	for (int i = 0; i < 8; i++) {
 		potencia = 0;
 		for (int j = 7; j > -1; --j, ++potencia) {
 			peso = elevar(2, potencia);
-			fila[i] += capa[i][j] * peso;
+			fila[i] += matriz[i][j] * peso;
 		}
 
 	}
@@ -265,34 +300,29 @@ void Graficador::toCubo()
 int Graficador::elevar(int n, int m)
 {
 	int result = 1;
-
 	for (size_t i = 0; i < m; i++)
-	{
 		result = result*n;
-	}
-
-
 	return result;
 }
 
-void Graficador::valuafxy() {
+void Graficador::valuafxy(byte** capa) {
 
 	float fx = 0.0f;
 	boolean fxvalida = false;
 
-	for (size_t i = 0; i < 8; i++)
+	for (byte i = 0; i < 8; i++)
 	{
 
-		ana.ReplaceNum(&Exy, &Ey, ejex[i], "x");
+		//ana.ReplaceNum(&Exy, &Ey, ejex[i], "x");
 
 		fx = getfx(i, &fxvalida);
 
 		if (fxvalida) {
-			int j = getPosj(fx, i);
+			int j = getPosj(fx, i, capa);
 			capa[i][j] = 1;
 
 
-			j = getPosj(-fx, i);
+			j = getPosj(-fx, i, capa);
 			capa[i][j] = 1;
 		}
 
@@ -313,21 +343,28 @@ float Graficador::getfx(int i, boolean* fxvalida)
 	float x = 0.0f;
 
 	x = ejex[i];
+
 	//Serial.print("[x = ");
 	//Serial.print(x);
 	//Serial.print(" ]");
+
 	xcuadrado = elevar(x, 2);
+
 	//Serial.print("[x^2 = ");
 	//Serial.print(xcuadrado);
 	//Serial.print(" ]");
+
 	determinante = 81 - xcuadrado;
+
 	//Serial.print("[det = ");
 	//Serial.print(determinante);
 	//Serial.print(" ]");
+
 	//si el  vamos a tener raices reales
 	if (determinante >= 0) {
 		*fxvalida = true;
 		fx = sqrtf(determinante);
+
 		//Serial.print("[ f(");
 		//Serial.print(x);
 		//Serial.print(") = ");
@@ -340,18 +377,27 @@ float Graficador::getfx(int i, boolean* fxvalida)
 
 void Graficador::actualizarData()
 {
-	int potencia = 7;
-	for (size_t i = 0; i < 8; i++, --potencia)
+	byte potencia = 7;
+	for (byte i = 0; i < 8; i++, --potencia)
 	{
-		ana.ReplaceNum(&Exyz, &Exy, ejez[i], "Z");
-
 		nivel = elevar(2, potencia);
-		valuafxy();
-		toCubo();
+		toCubo(cubo[i]);
 		enviarData();
 		delay(100);
 	}
+}
+
+void Graficador::SetFuncion(String entrada)
+{
+	ana.analizaEntrada(entrada, &Exyz, &linfx, &lsupx, &linfy, &lsupy, &linfz, &lsupz);
+	escalar(ejex, linfx, lsupx);
+	escalar(ejey, linfy, lsupy);
+	escalar(ejez, linfz, lsupz);
 
 
-
+	//for (byte i = 0; i < 8; i++)
+	//{
+		//ana.ReplaceNum(&Exyz, &Exy, ejez[i], "Z");
+	valuafxy(cubo[0]);
+	//}
 }
