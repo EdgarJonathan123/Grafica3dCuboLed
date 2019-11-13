@@ -1,7 +1,7 @@
 #include "Grafica.h"
 
 
-String inFuncion = "(x^2/4)+(y^2/8+2)+z^2=2^2*1;-9;9;-20;20;-30;9";
+String inFuncion = "(x^2/4)+(y^2/8+2)+z^2=2^2*1;-9;9;-9;0;-30;9";
 
 Graficador graf = Graficador(2, 3, 4);
 

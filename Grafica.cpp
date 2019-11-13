@@ -183,16 +183,15 @@ void Graficador::escalar(float* vector, int linf, int lsup) {
 		float escala = ((float)tamanio / 7.00);
 		vector[i] = linf + i*escala;
 
-			Serial.print("[ escala = ");
-			Serial.print(escala);
-			Serial.print(" ]");
+		//Serial.print("[ escala = ");
+		//Serial.print(escala);
+		//Serial.print(" ]");
 
-
-			Serial.print("{ vector(");
-			Serial.print(i);
-			Serial.print(") = ");
-			Serial.print(vector[i]);
-			Serial.println(" }");
+		//Serial.print("{ vector(");
+		//Serial.print(i);
+		//Serial.print(") = ");
+		//Serial.print(vector[i]);
+		//Serial.println(" }");
 	}
 
 
@@ -200,80 +199,82 @@ void Graficador::escalar(float* vector, int linf, int lsup) {
 
 int Graficador::getPosj(int fx, int i, byte** capa)
 {
-	int indice = 0;
-	float a = 0;
-	float b = 0;
-	float c = 0;
+	int indice = -1;
 
-	for (size_t j = 0; j < 7; j++)
-	{
-		//a la resta entre la posicion j y la el valor fx
-		a = abs(ejey[j] - fx);
-		//Serial.print("[para i=");
-		//Serial.print(i);
-		//Serial.print("; |");
-		//Serial.print(eje[i]);
-		//Serial.print("-");
-		//Serial.print(y);
-		//Serial.print("| = ");
-		//Serial.print(a);
-		//Serial.print(" ]");
-		//b la resta entre la posicion j+1 y la el valor fx
-		b = abs(ejey[j + 1] - fx);
-		//Serial.print("[para i+1=");
-		//Serial.print(i + 1);
-		//Serial.print("; |");
-		//Serial.print(eje[i + 1]);
-		//Serial.print("-");
-		//Serial.print(y);
-		//Serial.print("| = ");
-		//Serial.print(b);
-		//Serial.println(" ]");
+	if ((fx >= ejey[0]) && (fx <= ejey[7])) {
+		float a = 0;
+		float b = 0;
+		float c = 0;
+		for (size_t j = 0; j < 7; j++)
+		{
+			//a la resta entre la posicion j y la el valor fx
+			a = abs(ejey[j] - fx);
+			//Serial.print("[para i=");
+			//Serial.print(i);
+			//Serial.print("; |");
+			//Serial.print(eje[i]);
+			//Serial.print("-");
+			//Serial.print(y);
+			//Serial.print("| = ");
+			//Serial.print(a);
+			//Serial.print(" ]");
+			//b la resta entre la posicion j+1 y la el valor fx
+			b = abs(ejey[j + 1] - fx);
+			//Serial.print("[para i+1=");
+			//Serial.print(i + 1);
+			//Serial.print("; |");
+			//Serial.print(eje[i + 1]);
+			//Serial.print("-");
+			//Serial.print(y);
+			//Serial.print("| = ");
+			//Serial.print(b);
+			//Serial.println(" ]");
 
-		//si b<a entonces elegimos b
-		// b esta asociado a i+1
-		if (b < a) {
-			if (j > 0) {
-				c = abs(ejey[indice] - fx);
-				if (b < c) {
+			//si b<a entonces elegimos b
+			// b esta asociado a i+1
+			if (b < a) {
+				if (j > 0) {
+					c = abs(ejey[indice] - fx);
+					if (b < c) {
+						indice = j + 1;
+					}
+				}
+				else {
 					indice = j + 1;
 				}
 			}
-			else {
-				indice = j + 1;
-			}
-		}
 
-		//si a < b entonces elegimos a
-		// a esta asociado a i
-		else if (a < b) {
+			//si a < b entonces elegimos a
+			// a esta asociado a i
+			else if (a < b) {
 
-			if (j > 0) {
-				c = abs(ejey[indice] - fx);
+				if (j > 0) {
+					c = abs(ejey[indice] - fx);
 
-				if (a < c) {
+					if (a < c) {
+						indice = j;
+					}
+				}
+				else {
 					indice = j;
 				}
 			}
 			else {
+				capa[i][j + 1] = 1;
+				capa[i][j] = 1;
 				indice = j;
+				break;
 			}
-		}
-		else {
-			capa[i][j + 1] = 1;
-			capa[i][j] = 1;
-			indice = j;
-			break;
+
 		}
 
+		//Serial.println("*************");
+		//Serial.print("[i =");
+		//Serial.print(indice);
+		//Serial.print("; eje[i] = ");
+		//Serial.print(eje[indice]);
+		//Serial.println(" ]");
 	}
-
-	//Serial.println("*************");
-	//Serial.print("[i =");
-	//Serial.print(indice);
-	//Serial.print("; eje[i] = ");
-	//Serial.print(eje[indice]);
-	//Serial.println(" ]");
 
 	return indice;
 }
@@ -312,18 +313,20 @@ void Graficador::valuafxy(byte** capa) {
 
 	for (byte i = 0; i < 8; i++)
 	{
-
-		//ana.ReplaceNum(&Exy, &Ey, ejex[i], "x");
-
+		//ana.ReplaceNum(&Exy, &Ey, ejex[i], "x");s
 		fx = getfx(i, &fxvalida);
 
 		if (fxvalida) {
-			int j = getPosj(fx, i, capa);
-			capa[i][j] = 1;
 
+			int j = getPosj(fx, i, capa);
+			if (j != -1) {
+				capa[i][j] = 1;
+			}
 
 			j = getPosj(-fx, i, capa);
-			capa[i][j] = 1;
+			if (j != -1) {
+				capa[i][j] = 1;
+			}
 		}
 
 	}
@@ -395,9 +398,11 @@ void Graficador::SetFuncion(String entrada)
 	escalar(ejez, linfz, lsupz);
 
 
-	//for (byte i = 0; i < 8; i++)
-	//{
-		//ana.ReplaceNum(&Exyz, &Exy, ejez[i], "Z");
+	for (byte i = 0; i < 8; i++)
+	{
+		ana.ReplaceNum(&Exyz, &Exy, ejez[i], "Z");
+	}
+
+	//este metodo es de prueba
 	valuafxy(cubo[0]);
-	//}
 }
