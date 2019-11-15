@@ -14,83 +14,64 @@ class Graficador
 
 public:
 
-	//constructores
-	Graficador(byte rclock, byte lacth, byte data);
-	Graficador();
-
-	//metodos
-	void init();
-	void printCubo();
-	//envia los datos al cubo
-	void enviarData();
-	//recorre la data y lo envia al cubo
-	void actualizarData();
-	//setea una funcion en 3d al cubo 
-	void SetFuncion(String entrada);
-	
+	Graficador(byte rclock, byte lacth, byte data); //rclock=reloj, data=datos,lacth=segundo reloj
+	void init();									//Inicia los componentes del objeto
+	void enviarData();								//lee el cubo y envia la data
+	void actualizarData();							//Actualiza la matriz que se envia al cubo
+	void SetFuncion(String entrada);				//Resuelve la Funcion3D y setea los datos en una matriz
 
 private:
 
-	//variables globales
-	Analizador ana;
-	float ejex[8];
-	float ejey[8];
-	float ejez[8];
-	byte*** cubo;
-	//byte** capa;
+	byte rclock;									// to all registers
+	byte latch;										// to all registers
+	byte data;										// to first register
 
-	//funciones
-	String Exyz;	//ecuacion 3 variables
-	String Exy;		//ecuacion 2 variables
-	String Ey;		//ecuacion 1 variable
 
-	//limites ejex
-	int linfx = 0;
-	int lsupx = 0;
+	Analizador ana;									//Analiza la funciones
+	float ejex[8];									//vector escalado en el ejex
+	float ejey[8];									//vector escalado en el ejey
+	float ejez[8];									//vector escalado en el ejez
+	byte** cubo;									//cubo el cual se va imprimir
+	byte** Cuadrado;									//auxiliar mientras se analiza la funcion
 
-	//limites ejey
-	int linfy = 0;
-	int lsupy = 0;
+	String Exyz;									//ecuacion 3 variables
+	String Exy;										//ecuacion 2 variables
+	String Ey;										//ecuacion 1 variable
 
-	//limites ejez
-	int linfz = 0;
-	int lsupz = 0;
+	int linfx = 0;									//Limite Inferior x
+	int lsupx = 0;									//Limite Superior x
+	int linfy = 0;									//Limite Inferior y
+	int lsupy = 0;									//Limite Superior y
+	int linfz = 0;									//Limite Inferior z
+	int lsupz = 0;									//Limite Superior z
 		 
 
-	//Salidas al cubo
-	byte nivel = 0;
-	byte fila[8];
-	
-	//metodos para el algoritmo de graficado
-	void escalar(float* vector,int linf,int lsup);
+	byte nivel = 0;									//Define el nivel del cubo
+	byte fila[8];									//define las filas de la capa que salen al cubo
 
-	void valuafxy(byte** capa);
-	float getfx(int i,boolean* fxvalida);
-	int getPosj(int fx,int i,byte** capa);
-	void toCubo(byte ** capa);
+
+
+	void escalar(float* vector,int linf,int lsup);
+	void Ecuacion3Variables();
+	void Ecucacion2variables(byte** capa);
+	float ObtenerValorY(byte i,boolean* fxvalida);
+	int GetPosJ(float fx,byte i,byte** capa);
+	void toCubo(byte ** capa, byte* vector);
+
 	int elevar(int n,int m);
 
 	
-	//metodoa para crear una matriz
-	void crearCubo();
-	
-	byte*** nuevoCubo(byte filas,byte columnas,byte caras);
 	byte** nuevaMatriz(byte filas, byte columnas);
-
-	void imprimirCubo(byte***cubo,byte fila,byte columnas,byte caras);
 	void imprimirMatriz(byte**mat, byte fila, byte col);
-	
-	void llenarCubo(byte*** cubo,byte filas,byte columnas, byte caras);
 	void llenarMatriz(byte** mat, byte f, byte c);
-
 	void llenarCeros(float* vector);
 	void llenarCeros(byte* vector);
 	void printData();
+	void setCapa(byte*capa);
 
-			
-	byte rclock;		// to all registers
-	byte latch;			// to all registers
-	byte data;			// to first register
+
+
+
 };
 
 

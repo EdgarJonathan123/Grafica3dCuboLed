@@ -50,8 +50,6 @@ void Analizador::ReplaceNum(String * origen, String * destino, float reemplazo, 
 		}
 	}
 
-
-
 	Reemplazo += (String)reemplazo;
 	Reemplazo.concat(')');
 
@@ -68,15 +66,50 @@ void Analizador::ReplaceNum(String * origen, String * destino, float reemplazo, 
 	}
 
 	*destino = part[0];
+/*
+	Serial.println(*destino);*/
 
-	Serial.println(*destino);
 
 }
 
 
-
-
-void Analizador::despejarFX(String * FXY, float x)
+void Analizador::Solve(String * Ecuacion, float * result)
 {
+
+	//Serial.print("Ec: ");
+	//Serial.println(*Ecuacion);
+
+
+	byte pos = 0;
+	String valores[2];
+
+	for (size_t i = 0; i < Ecuacion->length(); i++)
+	{
+		char caracter = Ecuacion->charAt(i);
+		if (caracter != '=') {
+			valores[pos] += caracter;	
+		}
+		else {
+			++pos;
+		}
+	}
+
+
+	for (size_t i = 0; i < pos+1; i++)
+	{
+		Serial.print("Expr[");
+		Serial.print(i);
+		Serial.print("] = ");
+		Serial.println(valores[i]);
+	}
 }
+
+void Analizador::toPosfijo(String E)
+{
+
+}
+
+
+
+
 

@@ -1,16 +1,13 @@
 
 #include "Grafica.h"
-Graficador::Graficador()
-{
-}
+
+
 Graficador::Graficador(byte rclock, byte latch, byte data)
 {
 	this->ana = Analizador();
 	this->rclock = rclock;
 	this->latch = latch;
 	this->data = data;
-
-	//crearCapa();
 }
 void Graficador::init()
 {
@@ -23,33 +20,20 @@ void Graficador::init()
 	llenarCeros(ejez);
 	llenarCeros(fila);
 
-	crearCubo();
+	Cuadrado = nuevaMatriz(8,8);
+	llenarMatriz(Cuadrado,8,8);
+
+
+	cubo = nuevaMatriz(8, 8);
+	llenarMatriz(cubo, 8, 8);
+
 }
 
 
 
-void Graficador::crearCubo()
-{
-	cubo = nuevoCubo(8, 8, 8);
-	llenarCubo(cubo, 8, 8, 8);
-
-	for (byte i = 1; i < 8; i++)
-	{
-		cubo[i][i][i] = 1;
-
-	}
-
-	//printCubo();
-}
-
-void Graficador::printCubo()
-{
-	imprimirCubo(cubo, 8, 8, 8);
-}
-
-//envia los enteros al cubo
 void Graficador::enviarData()
 {
+
 	digitalWrite(latch, LOW);
 	shiftOut(data, rclock, LSBFIRST, nivel); //Esta data queda en el ultimo shift register el que tiene el arreglo de transistores darlington ULN2803
 	shiftOut(data, rclock, LSBFIRST, fila[7]); //Esta data queda en el penultimo shift register
@@ -60,18 +44,10 @@ void Graficador::enviarData()
 	shiftOut(data, rclock, LSBFIRST, fila[2]);
 	shiftOut(data, rclock, LSBFIRST, fila[1]);
 	shiftOut(data, rclock, LSBFIRST, fila[0]); //Esta data queda en el primer shift register
+
 	digitalWrite(latch, HIGH);
 }
-void Graficador::imprimirCubo(byte *** cubo, byte fila, byte columnas, byte caras)
-{
-	for (byte i = 0; i < caras; i++)
-	{
-		Serial.print("*********** Cara = ");
-		Serial.print(i);
-		Serial.println("*********");
-		imprimirMatriz(cubo[i], fila, columnas);
-	}
-}
+
 void Graficador::imprimirMatriz(byte**mat, byte fila, byte col) {
 	for (byte i = 0; i < fila; i++) {
 		for (byte j = 0; j < col; ++j) {
@@ -82,13 +58,7 @@ void Graficador::imprimirMatriz(byte**mat, byte fila, byte col) {
 		Serial.println("");
 	}
 }
-void Graficador::llenarCubo(byte *** cubo, byte filas, byte columnas, byte caras)
-{
-	for (byte i = 0; i < caras; i++)
-	{
-		llenarMatriz(cubo[i], filas, columnas);
-	}
-}
+
 void Graficador::llenarMatriz(byte** mat, byte f, byte c) {
 	for (byte i = 0; i < f; i++)
 	{
@@ -98,20 +68,8 @@ void Graficador::llenarMatriz(byte** mat, byte f, byte c) {
 			mat[i][j] = 0;
 		}
 	}
-
 };
-byte *** Graficador::nuevoCubo(byte filas, byte columnas, byte caras)
-{
-	byte*** cubo;
-	cubo = new byte**[caras];
 
-	for (byte i = 0; i < caras; i++)
-	{
-		cubo[i] = nuevaMatriz(filas, columnas);
-	}
-
-	return cubo;
-}
 byte** Graficador::nuevaMatriz(byte filas, byte columnas) {
 
 	byte** matriz;
@@ -126,7 +84,7 @@ byte** Graficador::nuevaMatriz(byte filas, byte columnas) {
 void Graficador::llenarCeros(float* vector) {
 	for (byte i = 0; i < 8; i++)
 	{
-		vector[i] = 0;
+		vector[i] = 0.0;
 	}
 }
 
@@ -170,6 +128,18 @@ void Graficador::printData()
 
 }
 
+void Graficador::setCapa(byte * capa)
+{
+	llenarCeros(fila);
+	for (byte i = 0; i < 8; i++)
+	{
+		fila[i] = capa[i];
+	}
+
+}
+
+
+
 
 //******Metodos del Algoritmo*******************
 
@@ -197,7 +167,17 @@ void Graficador::escalar(float* vector, int linf, int lsup) {
 
 }
 
-int Graficador::getPosj(int fx, int i, byte** capa)
+void Graficador::Ecuacion3Variables()
+{
+	for (byte i = 0; i < 8; i++)
+	{
+		ana.ReplaceNum(&Exyz, &Exy, ejez[i], "Z");
+		Ecucacion2variables(Cuadrado);
+		toCubo(Cuadrado, cubo[i]);
+	}
+}
+
+int Graficador::GetPosJ(float fx, byte i, byte** capa)
 {
 	int indice = -1;
 
@@ -279,12 +259,9 @@ int Graficador::getPosj(int fx, int i, byte** capa)
 	return indice;
 }
 
-
-
 //actualiza todos los valores enteros para enviarlos al cubo
-void Graficador::toCubo(byte**matriz)
+void Graficador::toCubo(byte**matriz, byte* vector)
 {
-	llenarCeros(fila);
 	int peso = 0;
 	int potencia = 0;
 
@@ -292,7 +269,7 @@ void Graficador::toCubo(byte**matriz)
 		potencia = 0;
 		for (int j = 7; j > -1; --j, ++potencia) {
 			peso = elevar(2, potencia);
-			fila[i] += matriz[i][j] * peso;
+			vector[i] += matriz[i][j] * peso;
 		}
 
 	}
@@ -306,85 +283,126 @@ int Graficador::elevar(int n, int m)
 	return result;
 }
 
-void Graficador::valuafxy(byte** capa) {
+void Graficador::Ecucacion2variables(byte** capa) {
 
 	float fx = 0.0f;
 	boolean fxvalida = false;
 
 	for (byte i = 0; i < 8; i++)
 	{
-		//ana.ReplaceNum(&Exy, &Ey, ejex[i], "x");s
-		fx = getfx(i, &fxvalida);
+
+		ana.ReplaceNum(&Exy, &Ey, ejex[i], "x");
+		fx = ObtenerValorY(i, &fxvalida);
+
 
 		if (fxvalida) {
 
-			int j = getPosj(fx, i, capa);
+			int j = GetPosJ(fx, i, capa);
 			if (j != -1) {
 				capa[i][j] = 1;
 			}
 
-			j = getPosj(-fx, i, capa);
-			if (j != -1) {
-				capa[i][j] = 1;
-			}
+			//j = GetPosJ(-fx, i, capa);
+			//if (j != -1) {
+			//	capa[i][j] = 1;
+			//}
 		}
-
 	}
 
 }
 
-float Graficador::getfx(int i, boolean* fxvalida)
-{
-	*fxvalida = false;
+float Graficador::ObtenerValorY(byte i , boolean* fxvalida) {
 
-	//Se quemara la funcion:
-	//f(x)= sqrt(9-x^2)
+	float result = 0.0;
 
-	float fx = 0;
-	float determinante = 0;
-	float xcuadrado = 0;
-	float x = 0.0f;
+	ana.Solve(&Ey,&result);
 
-	x = ejex[i];
-
-	//Serial.print("[x = ");
-	//Serial.print(x);
-	//Serial.print(" ]");
-
-	xcuadrado = elevar(x, 2);
-
-	//Serial.print("[x^2 = ");
-	//Serial.print(xcuadrado);
-	//Serial.print(" ]");
-
-	determinante = 81 - xcuadrado;
-
-	//Serial.print("[det = ");
-	//Serial.print(determinante);
-	//Serial.print(" ]");
-
-	//si el  vamos a tener raices reales
-	if (determinante >= 0) {
-		*fxvalida = true;
-		fx = sqrtf(determinante);
-
-		//Serial.print("[ f(");
-		//Serial.print(x);
-		//Serial.print(") = ");
-		//Serial.print(fx);
-		//Serial.println(" ]");	
-	}
-
-	return fx;
+	return result;
 }
+
+//float Graficador::ObtenerValorY(int i, boolean* fxvalida)
+//{
+//	/*
+//	String izq;
+//	String der;*/
+//
+//	//Serial.println(Ey);
+//
+//	for (byte i = 0; i < 8; i++)
+//	{
+//		//ana.ReplaceNum(&Ey, &E, ejey[i], "y");
+//
+//		//ana.separaEcuacion(&E,&der,&izq);
+//
+//
+//		/*Serial.print("[izq: ");
+//		Serial.print(izq);
+//		Serial.print("][der: ");
+//		Serial.print(der);
+//		Serial.println("]")*/;
+//	}
+//
+//
+//
+//
+//
+//	return 0.00;
+//
+//
+//
+//
+//
+//	//*fxvalida = false;
+//
+//	////Se quemara la funcion:
+//	////f(x)= sqrt(9-x^2)
+//
+//	//float fx = 0;
+//	//float determinante = 0;
+//	//float xcuadrado = 0;
+//	//float x = 0.0f;
+//
+//	//x = ejex[i];
+//
+//	////Serial.print("[x = ");
+//	////Serial.print(x);
+//	////Serial.print(" ]");
+//
+//	//xcuadrado = elevar(x, 2);
+//
+//	////Serial.print("[x^2 = ");
+//	////Serial.print(xcuadrado);
+//	////Serial.print(" ]");
+//
+//	//determinante = 81 - xcuadrado;
+//
+//	////Serial.print("[det = ");
+//	////Serial.print(determinante);
+//	////Serial.print(" ]");
+//
+//	////si el  vamos a tener raices reales
+//	//if (determinante >= 0) {
+//	//	*fxvalida = true;
+//	//	fx = sqrtf(determinante);
+//
+//	//	//Serial.print("[ f(");
+//	//	//Serial.print(x);
+//	//	//Serial.print(") = ");
+//	//	//Serial.print(fx);
+//	//	//Serial.println(" ]");	
+//	//}
+//	//return fx;
+//
+//
+//}
 
 void Graficador::actualizarData()
 {
 	byte potencia = 7;
-	for (byte i = 0; i < 8; i++, --potencia)
+	for (byte i = 0; i < 8; i++,--potencia)
 	{
-		nivel = elevar(2, potencia);
-		toCubo(cubo[i]);
+		nivel = elevar(2,potencia);
+		setCapa(cubo[i]);
 		enviarData();
 		delay(100);
 	}
@@ -397,12 +415,6 @@ void Graficador::SetFuncion(String entrada)
 	escalar(ejey, linfy, lsupy);
 	escalar(ejez, linfz, lsupz);
 
+	Ecuacion3Variables();
 
-	for (byte i = 0; i < 8; i++)
-	{
-		ana.ReplaceNum(&Exyz, &Exy, ejez[i], "Z");
-	}
-
-	//este metodo es de prueba
-	valuafxy(cubo[0]);
 }
