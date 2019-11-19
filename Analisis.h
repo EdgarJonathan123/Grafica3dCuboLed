@@ -33,6 +33,7 @@ private:
 	String agregarAlotroLado(String  destino, String  origen);
 	void getExpresiones(String * expr, List<String>* expresiones);
 	boolean existeY(String* Ecuacion);
+	void operarLado(String*ladoA);
 
 
 

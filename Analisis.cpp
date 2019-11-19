@@ -205,7 +205,7 @@ void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 				aux = ladoB->toFloat();
 				//Serial.print("Aux: ");
 				//Serial.println(aux);
-				if (aux > 0) {
+				if (aux >= 0) {
 					*fxvalida = true;
 					aux = sqrt(aux);
 				}
@@ -231,25 +231,24 @@ void Analizador::despejeMedio(String * ladoA, String * ladoB)
 	getExpresiones(ladoA, expresiones);
 	byte indice = getIndiceExpresionY(expresiones);
 
-	for (size_t i = 0; i < expresiones->Count(); i++)
-	{
-		String exp = (*expresiones)[i];
-		if (i != indice) {
-			for (size_t j = 0; j < exp.length(); j++)
-			{
-				char letra = exp.charAt(j);
-				ladoB->concat(letra);
+	//si no hay expresiones para cambiar solo operar
+
+
+
+		for (size_t i = 0; i < expresiones->Count(); i++)
+		{
+			String exp = (*expresiones)[i];
+			if (i != indice) {
+				for (size_t j = 0; j < exp.length(); j++)
+				{
+					char letra = exp.charAt(j);
+					ladoB->concat(letra);
+				}
+				operarLado(ladoB);
 			}
-
-			String aux = "";
-			toPosfijo(ladoB, &aux);
-			*ladoB = aux;
-			aux = "";
-			EvaluaPosfijo(ladoB, &aux);
-			*ladoB = aux;
-
 		}
-	}
+
+
 	*ladoA = "";
 	char letra = expresiones->operator[](indice).charAt(0);
 	if (letra == '+') {
@@ -276,10 +275,10 @@ void Analizador::despejeMedio(String * ladoA, String * ladoB)
 	}
 
 
-	//Serial.print("Ecuacion = ");
-	//Serial.print(*ladoA);
-	//Serial.print(" = ");
-	//Serial.println(*ladoB);
+	Serial.print("Ecuacion = ");
+	Serial.print(*ladoA);
+	Serial.print(" = ");
+	Serial.println(*ladoB);
 
 
 
@@ -408,6 +407,16 @@ boolean Analizador::existeY(String * Ecuacion)
 		}
 	}
 	return false;
+}
+
+void Analizador::operarLado(String * ladoB)
+{
+	String aux = "";
+	toPosfijo(ladoB, &aux);
+	*ladoB = aux;
+	aux = "";
+	EvaluaPosfijo(ladoB, &aux);
+	*ladoB = aux;
 }
 
 void Analizador::toPosfijo(String * infija, String * result)
@@ -586,7 +595,9 @@ void Analizador::EvaluaPosfijo(String * posfija, String * result)
 
 		}
 		else if (!esOperador(caracter)) {
+
 			//Serial.println(" No es un operador");
+
 			Operando.concat(caracter);
 		}
 		else if (caracter == '-') {
@@ -610,7 +621,6 @@ void Analizador::EvaluaPosfijo(String * posfija, String * result)
 			else {
 				desapilaOperandos(&pila, &i, caracter);
 			}
-
 		}
 		else {
 			desapilaOperandos(&pila, &i, caracter);
@@ -679,8 +689,6 @@ float Analizador::Operacion(char operador, float a, float b)
 
 boolean Analizador::esOperador(char letra)
 {
-
-
 	switch (letra)
 	{
 	case '^':
