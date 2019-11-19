@@ -284,7 +284,7 @@ int Graficador::elevar(int n, int m)
 }
 
 void Graficador::Ecucacion2variables(byte** capa) {
-
+	llenarMatriz(capa,8,8);
 	float fx = 0.0f;
 	boolean fxvalida = false;
 
@@ -297,15 +297,17 @@ void Graficador::Ecucacion2variables(byte** capa) {
 
 		if (fxvalida) {
 
+			Serial.println("fxvalida");
+
 			int j = GetPosJ(fx, i, capa);
 			if (j != -1) {
 				capa[i][j] = 1;
 			}
 
-			//j = GetPosJ(-fx, i, capa);
-			//if (j != -1) {
-			//	capa[i][j] = 1;
-			//}
+			j = GetPosJ(-fx, i, capa);
+			if (j != -1) {
+				capa[i][j] = 1;
+			}
 		}
 	}
 
@@ -315,7 +317,9 @@ float Graficador::ObtenerValorY(byte i , boolean* fxvalida) {
 
 	float result = 0.0;
 
-	ana.Solve(&Ey,&result);
+	Serial.print("Ecucaion :");
+	Serial.println(Ey);
+	ana.Solve(&Ey,&result,fxvalida);
 
 	return result;
 }
@@ -401,7 +405,7 @@ void Graficador::actualizarData()
 	byte potencia = 7;
 	for (byte i = 0; i < 8; i++,--potencia)
 	{
-		nivel = elevar(2,potencia);
+		nivel = elevar(2,i);
 		setCapa(cubo[i]);
 		enviarData();
 		delay(100);

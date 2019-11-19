@@ -1,18 +1,16 @@
+
 #include "grafica.h"
-
-
-String infuncion = "(x^2/4)+(y^2/8+2)+z^2=2^2*1;0;9;0;9;-30;9";
+String infuncion = "z^2=x^2+y^2;-8;8;-8;8;0;8";
 Graficador graf = Graficador(2, 3, 4);
 
-void setup() {
-
+void setup() { 
 	Serial.begin(9600);
 	graf.init();
 	graf.SetFuncion(infuncion);
+	//Serial.print("Si compilo o solo pajas :(");
 }
 
 void loop() {
 	graf.actualizarData();
 }
-
 
