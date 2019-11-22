@@ -4,7 +4,7 @@
 
 //#include "Analisis.h"
 
-String infuncion = "x^2+y^2+z^2=9^2;-10;10;-10;10;-10;10";
+String infuncion = "x^2+y^2+z^2=9^2;-10;10;-10;10;0;9";
 Graficador graf = Graficador(2, 3, 4);
 
 //String Ecuacion = "y^3=27";

@@ -413,6 +413,7 @@ void Graficador::actualizarData()
 
 void Graficador::SetFuncion(String entrada)
 {
+	llenarMatriz(cubo, 8, 8);
 	ana.analizaEntrada(entrada, &Exyz, &linfx, &lsupx, &linfy, &lsupy, &linfz, &lsupz);
 	escalar(ejex, linfx, lsupx);
 	escalar(ejey, linfy, lsupy);
