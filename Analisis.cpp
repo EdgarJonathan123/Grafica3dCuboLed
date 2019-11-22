@@ -103,19 +103,20 @@ void Analizador::Solve(String * Ecuacion, float * result, boolean* fxvalida)
 	}
 	else if (existeY(&der)) {
 		despeje(&der, &izq, fxvalida);
-
 		*result = izq.toFloat();
 	}
 
 
-	//Serial.print("Respuesta Final: ");
-	//Serial.println(*result);
+
 
 	Serial.print("Ecuacion : ");
 	Serial.print(izq);
 	Serial.print(" = ");
 	Serial.println(der);
 
+
+	//Serial.print("Respuesta Final: ");
+	//Serial.println(*result);
 
 }
 
@@ -129,44 +130,41 @@ void Analizador::despeje(String * ladoA, String* ladoB, boolean* fxvalida)
 	String medioY = "";
 
 	byte pos = 0;
+
 	for (size_t i = 0; i < ladoA->length(); i++)
 	{
 		char letra = ladoA->charAt(i);
+		//Serial.print("letra: [");
+		//Serial.print(letra);
+		//Serial.println("]");
 
 
+		if (letra == 'y' || letra == 'Y') {
 
-		if ((letra == '^') || esNumero(letra) || (letra == 'y') || (letra == 'Y'))
-		{
-			medioY.concat(letra);
-		}
-		else	if ((letra != 'y') && (letra != 'Y')) {
-
-			if (pos == 0) {
-				izqY.concat(letra);
+			while (letra != '/'&&letra != '*'&&(i<ladoA->length()))
+			{
+				//Serial.print("letra: [");
+				//Serial.print(letra);
+				//Serial.println("]");
+				medioY.concat(letra);
+				i++;
+				letra = ladoA->charAt(i);
 			}
-			else {
+
+			if (i == (ladoA->length()-1)) {
 				derY.concat(letra);
 			}
 
-		}
-		else {
 			pos++;
 		}
-
-
+		else if (pos == 0) {
+			izqY.concat(letra);
+		}
+		else if (pos == 1) {
+			derY.concat(letra);
+		}
 	}
 
-	if (izqY.length() > 0) {
-	}
-
-	if (derY.length() > 0) {
-	}
-
-	if (medioY.length() > 0) {
-		AnalizaMedioY(&medioY, ladoB, fxvalida);
-	}
-
-	*ladoA = "y";
 
 	//Serial.print("izqY = ");
 	//Serial.print(izqY);
@@ -179,18 +177,164 @@ void Analizador::despeje(String * ladoA, String* ladoB, boolean* fxvalida)
 	//Serial.print("derY = ");
 	//Serial.print(derY);
 	//Serial.println(";");
+
+
+
+
+	if (izqY.length() > 0) {
+		AnalizaIzqY(&izqY, ladoB, fxvalida);
+	}
+
+
+
+
+	if (derY.length() > 0) {
+		AnalizaDerY(&derY, ladoB, fxvalida);
+	}
+
+
+	if (medioY.length() > 0) {
+		AnalizaMedioY(&medioY, ladoB, fxvalida);
+	}
+
+
+
+	*ladoA = "y";
+
+
 }
 
-void Analizador::AnalizaIzqY(String * ladoA, String* ladoB)
+
+void Analizador::AnalizaIzqY(String * ladoA, String* ladoB, boolean* fxvalida)
 {
+
+	String pila = "";
+	char letra = ladoA->charAt(ladoA->length() - 1);
+
+
+	if (letra == '*') {
+		ladoB->concat('/');
+	}
+	else if (letra == '/') {
+		ladoB->concat('*');
+	}
+
+	ladoA->remove(ladoA->length() - 1);
+
+	//Llena apila corchetes abiertos 
+	for (size_t i = 0; i < ladoA->length(); i++)
+	{
+		char caracter = ladoA->charAt(i);
+		//apila
+		if (caracter == '(') {
+			pila.concat(caracter);
+		}
+		//desapila
+		if (caracter == ')') {
+			pila.remove(pila.length() - 1);
+		}
+	}
+
+	//omite concatenar corchetes abiertos
+	for (size_t i = 0; i < ladoA->length(); i++)
+	{
+		char caracter = ladoA->charAt(i);
+
+		if (caracter == '(') {
+			if (pila.length() > 0) {
+				pila.remove(pila.length() - 1);
+			}
+			else {
+				ladoB->concat(caracter);
+			}
+		}
+		else {
+			ladoB->concat(caracter);
+		}
+	}
+
+
+
+	//Serial.print("Ultima concatenacion ");
+	//Serial.println(*ladoB);
+
+	operarLado(ladoB);
+
+	//Serial.print("Lado B: ");
+	//Serial.println(*ladoB);
 }
 
-void Analizador::AnalizaDerY(String * ladoA, String* ladoB)
+void Analizador::AnalizaDerY(String * ladoA, String* ladoB, boolean* fxvalida)
 {
+	//cambiamos los signos
+	if (ladoA->charAt(0) == '*') {
+		ladoA->setCharAt(0, '/');
+	}
+	else if (ladoA->charAt(0) == '/') {
+		ladoA->setCharAt(0, '*');
+	}
+
+	String pila = "";
+
+	for (size_t i = 0; i < ladoA->length(); i++)
+	{
+		char caracter = ladoA->charAt(i);
+		//apila
+		if (caracter == '(') {
+			pila.concat(caracter);
+		}
+		//desapila
+		if (caracter == ')') {
+			if (pila.length() > 0) {
+				char elementotope = ladoA->charAt(pila.length() - 1);
+				if (elementotope == '(') {
+					pila.remove(pila.length() - 1);
+				}
+				else {
+					pila.concat(')');
+				}
+			}
+			else {
+				pila.concat(')');
+			}
+		}
+	}
+
+	//Serial.print("Tamanio de la pila corchetes cerrados: ");
+	//Serial.println(pila.length());
+
+	for (size_t i = 0; i < ladoA->length(); i++)
+	{
+		char caracter = ladoA->charAt(i);
+		if (caracter == ')') {
+
+			if (pila.length() > 0) {
+				pila.remove(pila.length() - 1);
+			}
+			else {
+				ladoB->concat(caracter);
+			}
+		}
+		else {
+			ladoB->concat(caracter);
+		}
+	}
+
+	//Serial.print("Concatenacion lado derecho antes: ");
+	//Serial.println(*ladoB);
+
+	operarLado(ladoB);
+
+	//Serial.print("Concatenacion lado derecho despues: ");
+	//Serial.println(*ladoB);
+
+
 }
 
 void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 {
+
+	
 	for (size_t i = 0; i < ladoA->length(); i++)
 	{
 		char letra = ladoA->charAt(i);
@@ -199,16 +343,33 @@ void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 			letra = ladoA->charAt(i);
 			//Serial.print("lETRA: ");
 			//Serial.println(letra);
+
 			if (letra == '2') {
+
+				float aux = 0.0;
+				aux = ladoB->toFloat();
+				Serial.print("Aux: ");
+				Serial.println(aux);
+				if (aux >= 0) {
+					*fxvalida = true;
+					aux = sqrt(aux);
+				}
+
+				Serial.print("Aux: ");
+				Serial.println(aux);
+
+				*ladoB = (String)aux;
+				break;
+			}
+
+			 if (letra == '3') {
 
 				float aux = 0.0;
 				aux = ladoB->toFloat();
 				//Serial.print("Aux: ");
 				//Serial.println(aux);
-				if (aux >= 0) {
-					*fxvalida = true;
-					aux = sqrt(aux);
-				}
+				*fxvalida = true;
+				aux = pow(aux,1/3);
 
 
 				//Serial.print("Aux: ");
@@ -218,6 +379,26 @@ void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 				break;
 			}
 
+			 if (letra == '4') {
+
+				float aux = 0.0;
+				aux = ladoB->toFloat();
+
+				Serial.print("Aux: ");
+				Serial.println(aux);
+
+				if (aux >= 0) {
+					*fxvalida = true;
+					aux = sqrt(aux);
+					aux = sqrt(aux);
+				}
+
+				Serial.print("Aux: ");
+				Serial.println(aux);
+
+				*ladoB = (String)aux;
+				break;
+			}
 
 		}
 
@@ -235,18 +416,18 @@ void Analizador::despejeMedio(String * ladoA, String * ladoB)
 
 
 
-		for (size_t i = 0; i < expresiones->Count(); i++)
-		{
-			String exp = (*expresiones)[i];
-			if (i != indice) {
-				for (size_t j = 0; j < exp.length(); j++)
-				{
-					char letra = exp.charAt(j);
-					ladoB->concat(letra);
-				}
-				operarLado(ladoB);
+	for (size_t i = 0; i < expresiones->Count(); i++)
+	{
+		String exp = (*expresiones)[i];
+		if (i != indice) {
+			for (size_t j = 0; j < exp.length(); j++)
+			{
+				char letra = exp.charAt(j);
+				ladoB->concat(letra);
 			}
+			operarLado(ladoB);
 		}
+	}
 
 
 	*ladoA = "";
@@ -275,7 +456,7 @@ void Analizador::despejeMedio(String * ladoA, String * ladoB)
 	}
 
 
-	Serial.print("Ecuacion = ");
+	Serial.print("Ecuacsdion = ");
 	Serial.print(*ladoA);
 	Serial.print(" = ");
 	Serial.println(*ladoB);

@@ -23,10 +23,11 @@ public:
 
 
 private:
+	
 
 	void despeje(String*ladoA, String* ladoB , boolean* fxvalida);
-	void AnalizaIzqY(String * ladoA, String* ladoB);
-	void AnalizaDerY(String * ladoA, String* ladoB);
+	void AnalizaIzqY(String * ladoA, String* ladoB, boolean* fxvalida);
+	void AnalizaDerY(String * ladoA, String* ladoB, boolean* fxvalida);
 	void AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida);
 	void despejeMedio(String* ladoA, String* ladoB);
 	byte getIndiceExpresionY(List<String>* list);

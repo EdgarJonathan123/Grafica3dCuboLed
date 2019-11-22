@@ -245,7 +245,6 @@ int Graficador::GetPosJ(float fx, byte i, byte** capa)
 				indice = j;
 				break;
 			}
-
 		}
 
 		//Serial.println("*************");
