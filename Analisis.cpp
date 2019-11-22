@@ -348,15 +348,15 @@ void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 
 				float aux = 0.0;
 				aux = ladoB->toFloat();
-				Serial.print("Aux: ");
-				Serial.println(aux);
+				//Serial.print("Aux: ");
+				//Serial.println(aux);
 				if (aux >= 0) {
 					*fxvalida = true;
 					aux = sqrt(aux);
 				}
 
-				Serial.print("Aux: ");
-				Serial.println(aux);
+				//Serial.print("Aux: ");
+				//Serial.println(aux);
 
 				*ladoB = (String)aux;
 				break;
@@ -384,8 +384,8 @@ void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 				float aux = 0.0;
 				aux = ladoB->toFloat();
 
-				Serial.print("Aux: ");
-				Serial.println(aux);
+				//Serial.print("Aux: ");
+				//Serial.println(aux);
 
 				if (aux >= 0) {
 					*fxvalida = true;
@@ -393,8 +393,8 @@ void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 					aux = sqrt(aux);
 				}
 
-				Serial.print("Aux: ");
-				Serial.println(aux);
+				//Serial.print("Aux: ");
+				//Serial.println(aux);
 
 				*ladoB = (String)aux;
 				break;
@@ -456,10 +456,10 @@ void Analizador::despejeMedio(String * ladoA, String * ladoB)
 	}
 
 
-	Serial.print("Ecuacsdion = ");
-	Serial.print(*ladoA);
-	Serial.print(" = ");
-	Serial.println(*ladoB);
+	//Serial.print("Ecuacsdion = ");
+	//Serial.print(*ladoA);
+	//Serial.print(" = ");
+	//Serial.println(*ladoB);
 
 
 
