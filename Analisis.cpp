@@ -38,6 +38,8 @@ void Analizador::ReplaceNum(String * origen, String * destino, float reemplazo, 
 	coincidencia.toLowerCase();
 	char coincidenciaMinuscula = coincidencia.charAt(0);
 
+	boolean encontrado = false;
+
 	String part[2];
 	String Reemplazo = "(";
 
@@ -48,13 +50,13 @@ void Analizador::ReplaceNum(String * origen, String * destino, float reemplazo, 
 		if (caracter == coincidenciaMinuscula) {
 			part[0] = origen->substring(0, i);
 			part[1] = origen->substring(i + 1, Tamanio);
+			encontrado = true;
 			break;
 		}
 	}
 
 	Reemplazo += (String)reemplazo;
 	Reemplazo.concat(')');
-
 
 	for (size_t i = 0; i < Reemplazo.length(); i++)
 	{
@@ -67,7 +69,17 @@ void Analizador::ReplaceNum(String * origen, String * destino, float reemplazo, 
 		part[0].concat(part[1].charAt(i));
 	}
 
-	*destino = part[0];
+
+	if (encontrado)
+	{
+
+		*destino = part[0];
+	}
+	else {
+
+		*destino = *origen;
+	}
+
 
 	//Serial.println(*destino);
 
@@ -112,7 +124,16 @@ void Analizador::Solve(String * Ecuacion, float * result, boolean* fxvalida)
 	Serial.print("Ecuacion : ");
 	Serial.print(izq);
 	Serial.print(" = ");
-	Serial.println(der);
+	Serial.print(der);
+	Serial.print(", fxvalida = ");
+
+	if (*fxvalida)
+	{
+		Serial.println("true;");
+	}
+	else {
+		Serial.println("false;");
+	}
 
 
 	//Serial.print("Respuesta Final: ");
@@ -141,7 +162,7 @@ void Analizador::despeje(String * ladoA, String* ladoB, boolean* fxvalida)
 
 		if (letra == 'y' || letra == 'Y') {
 
-			while (letra != '/'&&letra != '*'&&(i<ladoA->length()))
+			while (letra != '/'&&letra != '*' && (i < ladoA->length()))
 			{
 				//Serial.print("letra: [");
 				//Serial.print(letra);
@@ -151,7 +172,7 @@ void Analizador::despeje(String * ladoA, String* ladoB, boolean* fxvalida)
 				letra = ladoA->charAt(i);
 			}
 
-			if (i == (ladoA->length()-1)) {
+			if (i == (ladoA->length() - 1)) {
 				derY.concat(letra);
 			}
 
@@ -320,8 +341,8 @@ void Analizador::AnalizaDerY(String * ladoA, String* ladoB, boolean* fxvalida)
 		}
 	}
 
-	//Serial.print("Concatenacion lado derecho antes: ");
-	//Serial.println(*ladoB);
+	Serial.print("Concatenacion lado derecho antes: ");
+	Serial.println(*ladoB);
 
 	operarLado(ladoB);
 
@@ -334,7 +355,7 @@ void Analizador::AnalizaDerY(String * ladoA, String* ladoB, boolean* fxvalida)
 void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 {
 
-	
+
 	for (size_t i = 0; i < ladoA->length(); i++)
 	{
 		char letra = ladoA->charAt(i);
@@ -362,14 +383,14 @@ void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 				break;
 			}
 
-			 if (letra == '3') {
+			if (letra == '3') {
 
 				float aux = 0.0;
 				aux = ladoB->toFloat();
 				//Serial.print("Aux: ");
 				//Serial.println(aux);
 				*fxvalida = true;
-				aux = pow(aux,1/3);
+				aux = pow(aux, 1 / 3);
 
 
 				//Serial.print("Aux: ");
@@ -379,7 +400,7 @@ void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 				break;
 			}
 
-			 if (letra == '4') {
+			if (letra == '4') {
 
 				float aux = 0.0;
 				aux = ladoB->toFloat();

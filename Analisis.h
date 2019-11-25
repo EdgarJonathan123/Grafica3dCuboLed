@@ -53,7 +53,7 @@ private:
 	//vacia la pila
 	void vaciarPila(String* pila, String* result);
 
-	void Analizador::desapilaOperandos(List<float>* pila, size_t* i, char caracter);
+	void desapilaOperandos(List<float>* pila, size_t* i, char caracter);
 
 
 

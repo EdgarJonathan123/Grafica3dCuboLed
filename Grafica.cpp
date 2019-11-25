@@ -171,6 +171,13 @@ void Graficador::Ecuacion3Variables()
 {
 	for (byte i = 0; i < 8; i++)
 	{
+		Serial.print("********Ejez[");
+		Serial.print(ejez[i]);
+		Serial.print("],Capa[");
+		Serial.print(i);
+		Serial.println("]*********");
+
+
 		ana.ReplaceNum(&Exyz, &Exy, ejez[i], "Z");
 		Ecucacion2variables(Cuadrado);
 		toCubo(Cuadrado, cubo[i]);
@@ -289,16 +296,29 @@ void Graficador::Ecucacion2variables(byte** capa) {
 
 	for (byte i = 0; i < 8; i++)
 	{
+		Serial.print("***ejex[");
+		Serial.print(ejex[i]);
+		Serial.print("],columna[");
+		Serial.print(i);
+		Serial.println("]***");
+
 
 		ana.ReplaceNum(&Exy, &Ey, ejex[i], "x");
 		fx = ObtenerValorY(i, &fxvalida);
 
-
 		if (fxvalida) {
-
-			Serial.println("fxvalida");
+		
 
 			int j = GetPosJ(fx, i, capa);
+
+			Serial.print("-->ejey[");
+			Serial.print(ejex[j]);
+			Serial.print("],fila[");
+			Serial.print(j);
+			Serial.println("]");
+
+			//Serial.println("Se acpeto la funcion xd ");
+
 			if (j != -1) {
 				capa[i][j] = 1;
 			}
@@ -307,6 +327,8 @@ void Graficador::Ecucacion2variables(byte** capa) {
 			if (j != -1) {
 				capa[i][j] = 1;
 			}
+
+			fxvalida = false;
 		}
 	}
 
@@ -420,5 +442,5 @@ void Graficador::SetFuncion(String entrada)
 	escalar(ejez, linfz, lsupz);
 
 	Ecuacion3Variables();
-
+	//delay(1000);
 }
