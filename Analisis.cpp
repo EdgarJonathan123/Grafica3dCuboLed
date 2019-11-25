@@ -172,7 +172,8 @@ void Analizador::despeje(String * ladoA, String* ladoB, boolean* fxvalida)
 				letra = ladoA->charAt(i);
 			}
 
-			if (i == (ladoA->length() - 1)) {
+
+			if (i < (ladoA->length() - 1)) {
 				derY.concat(letra);
 			}
 
@@ -288,6 +289,9 @@ void Analizador::AnalizaIzqY(String * ladoA, String* ladoB, boolean* fxvalida)
 void Analizador::AnalizaDerY(String * ladoA, String* ladoB, boolean* fxvalida)
 {
 	//cambiamos los signos
+	//Serial.print("lado A : ");
+	//Serial.println(*ladoA);
+
 	if (ladoA->charAt(0) == '*') {
 		ladoA->setCharAt(0, '/');
 	}
@@ -341,8 +345,8 @@ void Analizador::AnalizaDerY(String * ladoA, String* ladoB, boolean* fxvalida)
 		}
 	}
 
-	Serial.print("Concatenacion lado derecho antes: ");
-	Serial.println(*ladoB);
+	//Serial.print("Concatenacion lado derecho antes: ");
+	//Serial.println(*ladoB);
 
 	operarLado(ladoB);
 
