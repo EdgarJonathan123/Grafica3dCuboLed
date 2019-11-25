@@ -188,17 +188,17 @@ void Analizador::despeje(String * ladoA, String* ladoB, boolean* fxvalida)
 	}
 
 
-	//Serial.print("izqY = ");
-	//Serial.print(izqY);
-	//Serial.println(";");
+	Serial.print("izqY = ");
+	Serial.print(izqY);
+	Serial.println(";");
 
-	//Serial.print("medioY = ");
-	//Serial.print(medioY);
-	//Serial.println(";");
+	Serial.print("medioY = ");
+	Serial.print(medioY);
+	Serial.println(";");
 
-	//Serial.print("derY = ");
-	//Serial.print(derY);
-	//Serial.println(";");
+	Serial.print("derY = ");
+	Serial.print(derY);
+	Serial.println(";");
 
 
 
@@ -277,13 +277,13 @@ void Analizador::AnalizaIzqY(String * ladoA, String* ladoB, boolean* fxvalida)
 
 
 
-	//Serial.print("Ultima concatenacion ");
-	//Serial.println(*ladoB);
+	Serial.print("Ultima concatenacion ");
+	Serial.println(*ladoB);
 
 	operarLado(ladoB);
 
-	//Serial.print("Lado B: ");
-	//Serial.println(*ladoB);
+	Serial.print("Lado B: ");
+	Serial.println(*ladoB);
 }
 
 void Analizador::AnalizaDerY(String * ladoA, String* ladoB, boolean* fxvalida)
@@ -325,8 +325,8 @@ void Analizador::AnalizaDerY(String * ladoA, String* ladoB, boolean* fxvalida)
 		}
 	}
 
-	//Serial.print("Tamanio de la pila corchetes cerrados: ");
-	//Serial.println(pila.length());
+	Serial.print("Tamanio de la pila corchetes cerrados: ");
+	Serial.println(pila.length());
 
 	for (size_t i = 0; i < ladoA->length(); i++)
 	{
@@ -345,13 +345,13 @@ void Analizador::AnalizaDerY(String * ladoA, String* ladoB, boolean* fxvalida)
 		}
 	}
 
-	//Serial.print("Concatenacion lado derecho antes: ");
-	//Serial.println(*ladoB);
+	Serial.print("Concatenacion lado derecho antes: ");
+	Serial.println(*ladoB);
 
 	operarLado(ladoB);
 
-	//Serial.print("Concatenacion lado derecho despues: ");
-	//Serial.println(*ladoB);
+	Serial.print("Concatenacion lado derecho despues: ");
+	Serial.println(*ladoB);
 
 
 }
@@ -359,76 +359,84 @@ void Analizador::AnalizaDerY(String * ladoA, String* ladoB, boolean* fxvalida)
 void Analizador::AnalizaMedioY(String * ladoA, String* ladoB, boolean* fxvalida)
 {
 
+	if (ladoA->length()>1) {
+		for (size_t i = 0; i < ladoA->length(); i++)
+		{
+			char letra = ladoA->charAt(i);
 
-	for (size_t i = 0; i < ladoA->length(); i++)
-	{
-		char letra = ladoA->charAt(i);
-		if (letra == '^') {
-			i++;
-			letra = ladoA->charAt(i);
-			//Serial.print("lETRA: ");
-			//Serial.println(letra);
+			if (letra == '^') {
+				i++;
+				letra = ladoA->charAt(i);
+				//Serial.print("lETRA: ");
+				//Serial.println(letra);
 
-			if (letra == '2') {
+				if (letra == '2') {
 
-				float aux = 0.0;
-				aux = ladoB->toFloat();
-				//Serial.print("Aux: ");
-				//Serial.println(aux);
-				if (aux >= 0) {
-					*fxvalida = true;
-					aux = sqrt(aux);
+					float aux = 0.0;
+					aux = ladoB->toFloat();
+					//Serial.print("Aux: ");
+					//Serial.println(aux);
+					if (aux >= 0) {
+						*fxvalida = true;
+						aux = sqrt(aux);
+					}
+
+					//Serial.print("Aux: ");
+					//Serial.println(aux);
+
+					*ladoB = (String)aux;
+					break;
 				}
 
-				//Serial.print("Aux: ");
-				//Serial.println(aux);
+				if (letra == '3') {
 
-				*ladoB = (String)aux;
-				break;
-			}
-
-			if (letra == '3') {
-
-				float aux = 0.0;
-				aux = ladoB->toFloat();
-				//Serial.print("Aux: ");
-				//Serial.println(aux);
-				*fxvalida = true;
-				aux = pow(aux, 1 / 3);
-
-
-				//Serial.print("Aux: ");
-				//Serial.println(aux);
-
-				*ladoB = (String)aux;
-				break;
-			}
-
-			if (letra == '4') {
-
-				float aux = 0.0;
-				aux = ladoB->toFloat();
-
-				//Serial.print("Aux: ");
-				//Serial.println(aux);
-
-				if (aux >= 0) {
+					float aux = 0.0;
+					aux = ladoB->toFloat();
+					//Serial.print("Aux: ");
+					//Serial.println(aux);
 					*fxvalida = true;
-					aux = sqrt(aux);
-					aux = sqrt(aux);
+					aux = pow(aux, 1 / 3);
+
+
+					//Serial.print("Aux: ");
+					//Serial.println(aux);
+
+					*ladoB = (String)aux;
+					break;
 				}
 
-				//Serial.print("Aux: ");
-				//Serial.println(aux);
+				if (letra == '4') {
 
-				*ladoB = (String)aux;
-				break;
+					float aux = 0.0;
+					aux = ladoB->toFloat();
+
+					//Serial.print("Aux: ");
+					//Serial.println(aux);
+
+					if (aux >= 0) {
+						*fxvalida = true;
+						aux = sqrt(aux);
+						aux = sqrt(aux);
+					}
+
+					//Serial.print("Aux: ");
+					//Serial.println(aux);
+
+					*ladoB = (String)aux;
+					break;
+				}
+
 			}
+
 
 		}
 
-
 	}
+	if (ladoA->length()==1) {
+		*fxvalida = 1;
+	}
+
+
 }
 
 void Analizador::despejeMedio(String * ladoA, String * ladoB)

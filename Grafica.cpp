@@ -323,10 +323,10 @@ void Graficador::Ecucacion2variables(byte** capa) {
 				capa[i][j] = 1;
 			}
 
-			j = GetPosJ(-fx, i, capa);
+	/*		j = GetPosJ(-fx, i, capa);
 			if (j != -1) {
 				capa[i][j] = 1;
-			}
+			}*/
 
 			fxvalida = false;
 		}
